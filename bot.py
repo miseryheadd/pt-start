@@ -360,7 +360,7 @@ def get_services():
 # Функция для получения логов бд
 def get_repl_logs():
     ssh = ssh_connect()
-    output = execute_ssh_command(ssh, 'cat /var/log/postgresql/postgresql-15-main.log | tail -n 6')
+    output = execute_ssh_command(ssh, 'cat /var/log/postgresql/postgresql-14-main.log | tail -n 6')
     return output
 
 
