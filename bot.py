@@ -358,12 +358,8 @@ def get_services():
 
 # Функция для получения логов бд
 def get_repl_logs():
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(hostname=rm_host, username=rm_user, password=rm_password, port=rm_port)
-    stdin, stdout, stderr = client.exec_command(f"echo '{rm_password}' | sudo -S docker logs db_repl")
-    output = str(stdout.read() + stderr.read()).replace('\\n', '\n').replace('\\t', '\t')[:4000]
-    client.close()
+    ssh = ssh_connect_db()
+    output = execute_ssh_command(ssh, 'cat /var/log/postgresql/postgresql-15-main.log | tail -n 6')
     return output
 
 
