@@ -1,5 +1,6 @@
 import logging
 import os
+from dotenv import load_dotenv
 import re
 import paramiko
 import psycopg2
@@ -9,7 +10,7 @@ from telegram import Update
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 
-
+load_dotenv()
 TOKEN = os.getenv('TOKEN')
 rm_user = os.getenv('RM_USER')
 rm_password = os.getenv('RM_PASSWORD')
