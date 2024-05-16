@@ -312,14 +312,14 @@ def get_w():
 # Функция для получения последних 10 входов в систему
 def get_auths():
     ssh = ssh_connect()
-    output = execute_ssh_command(ssh, 'tail -n 10 /var/log/auth.log')
+    output = execute_ssh_command(ssh, 'last -n 10')
     return output
 
 
 # Функция для получения последних 5 критических событий
 def get_critical():
     ssh = ssh_connect()
-    output = execute_ssh_command(ssh, 'tail -n 5 /var/log/syslog | grep -i "critical"')
+    output = execute_ssh_command(ssh, 'journalctl -p 2 -n 5')
     return output
 
 
