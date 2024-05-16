@@ -81,7 +81,7 @@ def confirmFoundNumbers(update: Update, context):
         standardized_number = re.sub(r'\D', '', phone_number)
         standardized_number = '8' + standardized_number[1:]
         standardizedPhoneNumbers.append(standardized_number)
-
+    standardizedPhoneNumbers = list(set(standardizedPhoneNumbers))
     if not phoneNumberList:
         update.message.reply_text('Телефонные номера не найдены')
         return ConversationHandler.END
@@ -106,9 +106,10 @@ def findEmailAddressesCommand(update: Update, context):
 
 def confirmEmails(update: Update, context):
     user_input = update.message.text
-    emailRegex = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
+    emailRegex = re.compile(r'\b[A-Za-z0-9._%+-]+@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\b')
 
     emailAddressesList = emailRegex.findall(user_input)
+    emailAddressesList = list(set(emailAddressesList))
 
     if not emailAddressesList:
         update.message.reply_text('Email-адреса не найдены')
@@ -129,6 +130,7 @@ def confirmEmails(update: Update, context):
 
 def verifyPasswordCommand(update: Update, context):
     update.message.reply_text('Введите пароль для проверки: ')
+    logger.info('Пользователь запросил проверку пароля.')
     return 'verifyPassword'
 
 
@@ -152,6 +154,7 @@ def connect_to_db():
             port=port_db,
             database=database
         )
+        logger.info('Пользователь подключился к бд!')
         return connection
     except (Exception, psycopg2.Error) as error:
         logger.error("Ошибка при работе с PostgreSQL: %s", error)
@@ -167,13 +170,16 @@ def addToDB(update: Update, context):
         if data_type == 'phone_numbers':
             phone_numbers = context.user_data.get('phone_numbers')
             add_phone_numbers_to_db(phone_numbers)
+            logger.info('Пользователь добавил номера в бд.')
             update.message.reply_text('Номера успешно добавлены в базу данных')
         elif data_type == 'email_addresses':
             email_addresses = context.user_data.get('email_addresses')
             add_email_addresses_to_db(email_addresses)
+            logger.info('Пользователь добавил почты в бд.')
             update.message.reply_text('Email-адреса успешно добавлены в базу данных')
     else:
         update.message.reply_text('Ок, данные не добавлены в базу данных')
+        logger.info('Пользователь отказался от добавления информации в бд.')
 
     return ConversationHandler.END
 
@@ -225,7 +231,7 @@ def ssh_connect():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(host, port, username, password)
-
+    logger.info('Пользователь подключился по ssh!')
     return ssh
 
 
@@ -238,7 +244,7 @@ def ssh_connect_db():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(host, port, username, password)
-
+    logger.info('Пользователь подключился по ssh к базе данных!')
     return ssh
 
 
@@ -250,7 +256,7 @@ def execute_ssh_command(ssh, command):
     output = stdout.read().decode('utf-8')
     # Закрываем соединение
     ssh.close()
-
+    logger.info(f'Пользователь выполнил команду {command} на удаленном сервере.')
     return output
 
 
@@ -379,6 +385,7 @@ def get_phone_numbers():
         # Формирование текстового сообщения с номерами телефонов
         phone_numbers_message = "\n".join([phone[0] for phone in phone_numbers])
         output = ("Номера телефонов:\n" + phone_numbers_message)
+        logger.info('Пользователь получил вывод номеров из бд.')
 
     except (Exception, psycopg2.Error) as error:
         output = f"Ошибка при работе с PostgreSQL: {error}"
@@ -407,7 +414,8 @@ def get_emails():
         # Формирование текстового сообщения с email-адресами
         email_message = "\n".join([email[0] for email in emails])
         output = ("Email-адреса:\n" + email_message)
-
+        logger.info('Пользователь получил вывод почт из бд.')
+        
     except (Exception, psycopg2.Error) as error:
         output = f"Ошибка при работе с PostgreSQL: {error}"
         logger.error("Ошибка при работе с PostgreSQL: %s", error)
