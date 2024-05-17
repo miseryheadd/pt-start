@@ -26,7 +26,8 @@
     - name: Install Python requirements
       pip:
         requirements: "{{ requirements_file }}"
-
+        
+# if u want to use debian remove "#" and comment previous task
 #    - name: Install Python requirements with --break-system-packages
 #      command: /usr/bin/python3 -m pip install --break-system-packages -r {{ requirements_file }}
 #      args:
@@ -167,15 +168,16 @@
   hosts: db_repl
   become: yes
   tasks:
-    - name: Add PostgreSQL apt repository
-      apt_key:
-        url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-        state: present
+  # if u want to use debian remove "#"
+  #  - name: Add PostgreSQL apt repository
+  #    apt_key:
+  #      url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+  #      state: present
 
-    - name: Add PostgreSQL repository
-      apt_repository:
-        repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
-        state: present
+  # - name: Add PostgreSQL repository
+  #    apt_repository:
+  #      repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
+  #      state: present
   
     - name: Update apt cache
       apt:
