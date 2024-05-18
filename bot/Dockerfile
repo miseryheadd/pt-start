@@ -5,8 +5,8 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Копируем файлы зависимостей и исходный код в контейнер
-COPY . .
-
+COPY requirements.txt .
+COPY bot.py .
 # Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
