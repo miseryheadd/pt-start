@@ -20,7 +20,7 @@
 
 
 ### Чтобы развернуть проект с помощью docker, вам нужно:
-1. скачать репозиторий командой "git clone -b ansible https://github.com/miseryheadd/pt-start . "
+1. скачать репозиторий командой "git clone -b docker https://github.com/miseryheadd/pt-start . "
 2. установить docker, docker compose
 3. заполнить .env файл вашими данными (**важно: не меняйте хосты для бд и реплики, т.к. они настроены на докере**)
 4. собрать проект командой "docker compose up"
